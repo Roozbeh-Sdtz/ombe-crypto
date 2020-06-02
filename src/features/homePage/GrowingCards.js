@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
         border: '5px solid #000',
         borderRadius: '15px',
         cursor: 'pointer',
+        color:'#000',
     },
 }));
 
@@ -43,10 +44,9 @@ export default function SimpleGrow() {
                       {...(checked ? {timeout: 500} : {})}
                 >
                     <Paper elevation={0} className={classes.paper}>
-                        <Link to={"/encrypt"}>
+                        <Link style={{textDecoration:'none'}} to={"/encrypt"}>
                             <div className={classes.card}>
                                 Encrypt
-
                             </div>
                         </Link>
                     </Paper>
@@ -57,7 +57,7 @@ export default function SimpleGrow() {
                     {...(checked ? {timeout: 1500} : {})}
                 >
                     <Paper elevation={0} className={classes.paper}>
-                        <Link to={"/create-key"}>
+                        <Link style={{textDecoration:'none'}} to={"/create-key"}>
                             <div className={classes.card}>create key</div>
                         </Link>
                     </Paper>
@@ -68,7 +68,7 @@ export default function SimpleGrow() {
                     {...(checked ? {timeout: 2000} : {})}
                 >
                     <Paper elevation={0} className={classes.paper}>
-                        <Link to={"/decrypt"}>
+                        <Link style={{textDecoration:'none'}} to={"/decrypt"}>
                             <div className={classes.card}>Decrypt</div>
                         </Link>
                     </Paper>
