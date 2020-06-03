@@ -1,47 +1,69 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+    withStyles,
+    makeStyles, createMuiTheme,
+} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+
+
+// style={props.style}
+// InputProps={{
+//     classes:{
+//         notchedOutline:classes2.notchedOutline
+//     }
+// }}
+// id={props.id}
+// label={props.label}
+// multiline
+// rows={4}
+// placeholder={props.placeHolder}
+// variant="outlined"
+// value={props.value}
+// onChange={props.onChange}
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: '25ch',
-        },
+        display: 'flex',
+        flexWrap: 'wrap',
     },
-
+    margin: {
+        margin: theme.spacing(1),
+    },
 }));
 
 export default function MultilineTextField(props) {
     const classes = useStyles();
-    const [value, setValue] = React.useState();
-
-    const handleChange = (event) => {
-        setValue(event.target.value);
-    };
+    const CssTextField = withStyles({
+        root: {
+            '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                    borderColor:props.color,
+                },
+                '&:hover fieldset': {
+                    borderColor:props.color,
+                },
+                '&.Mui-focused fieldset': {
+                    borderColor:props.color,
+                },
+            },
+        },
+    })(TextField);
 
     return (
-        <form className={classes.root} noValidate autoComplete="off">
-
-            <div>
-                <TextField
-                    style={props.style}
-                    InputProps={{
-                        classes:{
-                            notchedOutline: props.notchedOutline
-                        }
-                    }}
-                    color={props.color}
-                    id={props.id}
-                    label={props.label}
-                    multiline
-                    rows={4}
-                    placeholder={props.placeHolder}
-                    variant="outlined"
-                    value={value}
-                    onChange={handleChange}
-                />
-            </div>
+        <form className={classes.root} noValidate>
+            <CssTextField
+                className={classes.margin}
+                style={props.style}
+                id={props.id}
+                label={props.label}
+                multiline
+                rows={4}
+                placeholder={props.placeHolder}
+                variant="outlined"
+                value={props.value}
+                onChange={props.onChange}
+            />
         </form>
     );
 }
