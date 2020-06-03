@@ -9,6 +9,7 @@ const useStyles = makeStyles((theme) => ({
             width: '25ch',
         },
     },
+
 }));
 
 export default function MultilineTextField(props) {
@@ -25,6 +26,11 @@ export default function MultilineTextField(props) {
             <div>
                 <TextField
                     style={props.style}
+                    InputProps={{
+                        classes:{
+                            notchedOutline: props.notchedOutline
+                        }
+                    }}
                     color={props.color}
                     id={props.id}
                     label={props.label}
