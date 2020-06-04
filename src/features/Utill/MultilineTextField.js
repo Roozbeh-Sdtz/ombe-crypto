@@ -5,23 +5,6 @@ import {
 } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 
-
-// style={props.style}
-// InputProps={{
-//     classes:{
-//         notchedOutline:classes2.notchedOutline
-//     }
-// }}
-// id={props.id}
-// label={props.label}
-// multiline
-// rows={4}
-// placeholder={props.placeHolder}
-// variant="outlined"
-// value={props.value}
-// onChange={props.onChange}
-
-
 const useStyles = makeStyles((theme) => ({
     root: {
         display: 'flex',
