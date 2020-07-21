@@ -19,6 +19,9 @@ import {Redirect} from "react-router-dom";
 import KeyboardBackspaceOutlinedIcon from "@material-ui/icons/KeyboardBackspaceOutlined";
 import FingerprintIcon from '@material-ui/icons/Fingerprint';
 
+import {generate_RSA_Keys} from '../../crypto/RSA'
+
+
 const useStyle = makeStyles((theme) => ({
     root: {
         display: "flex",
@@ -47,6 +50,10 @@ export default function CreateKey() {
     const [modalText, setModalText] = useState('');
     const [id, setID] = useState('')
     const [isIdUnique, setIsIdUnique] = useState(true)
+    const [keys, setKeys] = useState({
+        privkey: '11',
+        pubkey: ''
+    })
     const classes = useStyle()
 
     if (redirect) {
@@ -121,6 +128,15 @@ export default function CreateKey() {
                         </Button>
                     </DialogActions>
                 </Dialog>
+
+                <div onClick={() => {
+                    setKeys(generate_RSA_Keys('512'))
+                }}>
+                    <div>{keys.privkey}</div>
+                    <div>{keys.pubkey}</div>
+
+
+                </div>
             </ThemeProvider>
         </div>
     )

@@ -14,6 +14,10 @@ import KeyboardBackspaceOutlinedIcon from '@material-ui/icons/KeyboardBackspaceO
 import {ThemeProvider} from "@material-ui/styles";
 import {Link, Redirect} from "react-router-dom";
 
+import {decrypt_RSA} from '../../crypto/RSA'
+import {encr1, encr2, pri} from '../../crypto/key'
+
+
 const useStyle = makeStyles((theme) => ({
     root: {
         display: "flex",
@@ -105,6 +109,12 @@ export default function Decrypt() {
                     }}
                 />
                 <Button variant="outlined" style={{margin: 20}}>Start</Button>
+
+                <div onClick={() => {
+                    console.log(decrypt_RSA(pri, encr2))
+                }}>
+                    decccc
+                </div>
             </ThemeProvider>
         </div>
     )

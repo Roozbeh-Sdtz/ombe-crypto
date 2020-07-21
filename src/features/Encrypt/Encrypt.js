@@ -10,6 +10,9 @@ import {ThemeProvider} from "@material-ui/styles";
 import KeyboardBackspaceOutlinedIcon from "@material-ui/icons/KeyboardBackspaceOutlined";
 import {Redirect} from "react-router-dom";
 
+import {encrypt_RSA} from '../../crypto/RSA'
+import {pub} from '../../crypto/key'
+
 const useStyle = makeStyles((theme) => ({
     root: {
         display: "flex",
@@ -172,6 +175,11 @@ export default function Encrypt() {
                         copied to clipboard!
                     </Alert>
                 </Snackbar>
+                <div onClick={() => {
+                    console.log(encrypt_RSA(pub, 'hi'))
+                }}>
+                    test
+                </div>
             </ThemeProvider>
         </div>
     )
