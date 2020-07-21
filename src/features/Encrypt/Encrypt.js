@@ -10,8 +10,13 @@ import {ThemeProvider} from "@material-ui/styles";
 import KeyboardBackspaceOutlinedIcon from "@material-ui/icons/KeyboardBackspaceOutlined";
 import {Redirect} from "react-router-dom";
 
+import JSZip from "jszip";
+import { saveAs } from 'file-saver';
+
 import {encrypt_RSA} from '../../crypto/RSA'
 import {pub} from '../../crypto/key'
+
+import {AES_encrypt} from '../../crypto/AES_code_decode'
 
 const useStyle = makeStyles((theme) => ({
     root: {
@@ -63,19 +68,42 @@ function Alert(props) {
 
 export default function Encrypt() {
     const classes = useStyle()
-    const [keyState, setKeyState] = useState(0) //0:default state  1:have userName State  2:doesnt have username state   3:wrong key state  4:loading    5:Done
+    const [keyState, setKeyState] = useState(1) //0:default state  1:have userName State  2:does'nt have username state   3:wrong key state  4:loading    5:Done
     const [color, setColor] = useState('')
     const [text, setText] = useState('')
-    const [value, setValue] = useState();
-    const [pass, setPass] = useState()
-    const [copy, setCopy] = useState(false)
+    const [publicKey, setPublicKey] = useState();
     const [redirect, setRedirect] = useState(false)
+    const [files, setFiles] = useState('')
+    const [AES, setAES] = useState({})
+    const [encrypted_AES_pass_with_RSA, setEncrypted_AES_pass_with_RSA] = useState('')
+
+    useEffect(() => {
+        if (Object.keys(AES).length !== 0) {
+            const AES_key_string = AES.key.toString()
+            setEncrypted_AES_pass_with_RSA(encrypt_RSA(publicKey, AES_key_string))
+        }
+    }, [AES])
+
+    useEffect(() => {
+        if (encrypted_AES_pass_with_RSA !== '') {
+            // const AES_String_data=AES.data.toString()
+            console.log(encrypted_AES_pass_with_RSA)
+            const zip = new JSZip();
+            zip.file("data",AES.data)
+            zip.file("key",encrypted_AES_pass_with_RSA)
+            zip.generateAsync({type:"blob"}).then(function(content){
+                saveAs(content,"encrypted.zip")
+            })
+
+
+        }
+    }, [encrypted_AES_pass_with_RSA])
+
     const handleChange = (event) => {
-        setKeyState(4)
+        // setKeyState(4)
         setText('')
         setColor('')
-        setValue(event.target.value);
-        setCopy(false)
+        setPublicKey(event.target.value);
         //API call.then(handelState(result))
     };
     const handleState = (res) => {
@@ -90,13 +118,7 @@ export default function Encrypt() {
         }
     }
 
-    const handleClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
 
-        setCopy(false);
-    };
     const darkTheme = createMuiTheme({
         palette: {
             type: 'dark',
@@ -106,10 +128,20 @@ export default function Encrypt() {
         return <Redirect push to="/"/>;
     }
 
+    const startAES = () => {
+        const fileReader = new FileReader()
+        fileReader.readAsText(files[0])
+        fileReader.onload = function () {
+            setAES(AES_encrypt(fileReader.result))
+
+        }
+    }
+
+
     let textDisplay = text === '' ? 'none' : ''
     let loadingDisplay = keyState === 4 ? '' : 'none'
     let passDisplay = keyState === 5 ? '' : 'none'
-    let startDisplay = (keyState === 1 || keyState === 2) ? '' : 'none'
+    let startDisplay = ((keyState === 1 || keyState === 2) && files.length > 0) ? '' : 'none'
     return (
         <div className={classes.root}>
             <ThemeProvider theme={darkTheme}>
@@ -131,7 +163,9 @@ export default function Encrypt() {
                 <div
                     className={classes.dropZone}
                 >
-                    <DropZone/>
+                    <DropZone
+                        setFiles={setFiles}
+                    />
                 </div>
 
                 <div className={classes.inputKey}>
@@ -140,7 +174,7 @@ export default function Encrypt() {
                         id={"encrypt-pub-key"}
                         label={"public key"}
                         placeHolder={"Enter your public key"}
-                        value={value}
+                        value={publicKey}
                         onChange={handleChange}
                         color={keyState}
                     />
@@ -158,28 +192,13 @@ export default function Encrypt() {
                 <div style={{display: loadingDisplay}}>
                     <img src={require('./103.gif')} style={{width: '50px', height: '50px'}}/>
                 </div>
-                <Button variant="outlined" style={{display: startDisplay}}>Start</Button>
-                <div className={classes.passContainer} style={{borderColor: color, display: passDisplay}}>
-                    <div className={classes.pass} style={{backgroundColor: color}}>
-                        {pass}
-                    </div>
-                    <FileCopyOutlinedIcon
+                <Button variant="outlined" style={{display: startDisplay}}
                         onClick={() => {
-                            navigator.clipboard.writeText(pass).then(() => setCopy(true))
+                            startAES()
                         }}
-                        style={{margin: 5, marginTop: 10, cursor: "pointer"}}
-                    />
-                </div>
-                <Snackbar open={copy} autoHideDuration={6000} onClose={handleClose}>
-                    <Alert onClose={handleClose} severity="success">
-                        copied to clipboard!
-                    </Alert>
-                </Snackbar>
-                <div onClick={() => {
-                    console.log(encrypt_RSA(pub, 'hi'))
-                }}>
-                    test
-                </div>
+                >Start</Button>
+
+
             </ThemeProvider>
         </div>
     )

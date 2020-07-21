@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import DropZone from "../Utill/DropZone";
 import {
     Button,
@@ -14,8 +14,11 @@ import KeyboardBackspaceOutlinedIcon from '@material-ui/icons/KeyboardBackspaceO
 import {ThemeProvider} from "@material-ui/styles";
 import {Link, Redirect} from "react-router-dom";
 
+import {AES_decrypt} from '../../crypto/AES_code_decode'
 import {decrypt_RSA} from '../../crypto/RSA'
-import {encr1, encr2, pri} from '../../crypto/key'
+import {pri} from '../../crypto/key'
+
+import JSZip from "jszip";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -49,6 +52,18 @@ export default function Decrypt() {
     const [encryptedPass, setEncryptedPass] = useState('')
     const [privateKey, setPrivateKey] = useState('')
     const [redirect, setRedirect] = useState(false)
+    const [files, setFiles] = useState()
+    const [encryptedData, setEncryptedData] = useState('')
+    const [AES_pass, set_AES_pass] = useState([])
+
+    useEffect(() => {
+        if (encryptedPass !== '') {
+            const key = decrypt_RSA(pri, encryptedPass)
+            const sep = key.split(',')
+            const arr = new Uint8Array(sep)
+            set_AES_pass(arr)
+        }
+    }, [encryptedPass])
 
     const darkTheme = createMuiTheme({
         palette: {
@@ -59,6 +74,20 @@ export default function Decrypt() {
     if (redirect) {
         return <Redirect push to="/"/>;
     }
+
+    const startAES = () => {
+
+        // setAES(AES_decrypt(fileReader.result))
+        JSZip.loadAsync(files[0]).then(function (zip) {
+            zip.files["key"].async('text').then((txt) => {
+                setEncryptedPass(txt)
+            })
+            zip.files["data"].async('text').then((txt) => {
+                setEncryptedData(txt)
+            })
+        })
+    }
+
     return (
         <div className={classes.root}>
             <ThemeProvider theme={darkTheme}>
@@ -80,21 +109,10 @@ export default function Decrypt() {
                 <div
                     className={classes.dropZone}
                 >
-                    <DropZone/>
+                    <DropZone
+                        setFiles={setFiles}
+                    />
                 </div>
-                <TextField
-                    id="passWord"
-                    label="encrypted password"
-                    className={classes.textField}
-                    multiline
-                    rows={4}
-                    placeholder="enter your Encrypted password here"
-                    variant="outlined"
-                    value={encryptedPass}
-                    onChange={value => {
-                        setEncryptedPass(value.target.value)
-                    }}
-                />
                 <TextField
                     id="privateKey"
                     label="private key"
@@ -111,7 +129,8 @@ export default function Decrypt() {
                 <Button variant="outlined" style={{margin: 20}}>Start</Button>
 
                 <div onClick={() => {
-                    console.log(decrypt_RSA(pri, encr2))
+                    // console.log(decrypt_RSA(pri, encr2))
+                    startAES()
                 }}>
                     decccc
                 </div>

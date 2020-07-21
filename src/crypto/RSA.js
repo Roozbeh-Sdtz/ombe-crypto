@@ -1,9 +1,7 @@
 import JSEncrypt from './bin/jsencrypt'
 
-export const generate_RSA_Keys = (key_size) => {
-    var sKeySize = key_size
-
-    var keySize = parseInt(sKeySize);
+export const generate_RSA_Keys = (sKey_size) => {
+    var keySize = parseInt(sKey_size);
     var crypt = new JSEncrypt();
     crypt.getKey();
     let keys = {}
@@ -16,13 +14,11 @@ export const encrypt_RSA = (publicKey, input_val) => {
     // Create the encryption object.
     var crypt = new JSEncrypt();
     crypt.setPublicKey(publicKey)
-    const encrypted = crypt.encrypt(input_val);
-    return encrypted
+    return crypt.encrypt(input_val)
 };
 
-export const decrypt_RSA = (privateKey,encrypted_val)=>{
+export const decrypt_RSA = (privateKey, encrypted_val) => {
     var crypt = new JSEncrypt();
     crypt.setPrivateKey(privateKey)
-    const decrypted = crypt.decrypt(encrypted_val);
-    return decrypted
+    return crypt.decrypt(encrypted_val)
 }
