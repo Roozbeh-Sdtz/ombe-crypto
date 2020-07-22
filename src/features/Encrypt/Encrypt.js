@@ -62,9 +62,7 @@ const useStyle = makeStyles((theme) => ({
     },
 }))
 
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+
 
 export default function Encrypt() {
     const classes = useStyle()
@@ -86,8 +84,6 @@ export default function Encrypt() {
 
     useEffect(() => {
         if (encrypted_AES_pass_with_RSA !== '') {
-            // const AES_String_data=AES.data.toString()
-            console.log(encrypted_AES_pass_with_RSA)
             const zip = new JSZip();
             zip.file("data",AES.data)
             zip.file("key",encrypted_AES_pass_with_RSA)
@@ -130,9 +126,10 @@ export default function Encrypt() {
 
     const startAES = () => {
         const fileReader = new FileReader()
-        fileReader.readAsText(files[0])
+        fileReader.readAsArrayBuffer(files[0])
         fileReader.onload = function () {
-            setAES(AES_encrypt(fileReader.result))
+            const u8= new Uint8Array(fileReader.result)
+            setAES(AES_encrypt(u8))
 
         }
     }

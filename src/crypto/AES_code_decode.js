@@ -36,10 +36,10 @@ export const AES_encrypt = (inputStringData) => {
     const key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
 
 
-    const textBytes = aesjs.utils.utf8.toBytes(inputStringData)
+    // const textBytes = aesjs.utils.utf8.toBytes(inputStringData)
     const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
     return {
-        data: aesCtr.encrypt(textBytes),
+        data: aesCtr.encrypt(inputStringData),
         key: key
     };
 
@@ -47,8 +47,8 @@ export const AES_encrypt = (inputStringData) => {
 
 }
 
-export const AES_decrypt = (inputBytesData) => {
-    const key = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+export const AES_decrypt = (inputBytesData,key) => {
+    // const textBytes = aesjs.utils.utf8.toBytes(inputBytesData);
     const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
     return aesCtr.decrypt(inputBytesData);
 }
