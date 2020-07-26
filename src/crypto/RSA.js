@@ -5,8 +5,8 @@ export const generate_RSA_Keys = (sKey_size) => {
     var crypt = new JSEncrypt();
     crypt.getKey();
     let keys = {}
-    keys.privkey = crypt.getPrivateKey()
-    keys.pubkey = crypt.getPublicKey()
+    keys.prvKey = crypt.getPrivateKey()
+    keys.pubKey = crypt.getPublicKey()
     return keys
 };
 

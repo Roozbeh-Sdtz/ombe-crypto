@@ -26,7 +26,8 @@ import MuiAlert from "@material-ui/lab/Alert";
 
 import JSZip from "jszip";
 import {saveAs} from 'file-saver';
-
+import {useDispatch, useSelector} from "react-redux";
+import {testPlus} from '../../app/wsSlice'
 
 
 const useStyle = makeStyles((theme) => ({
@@ -62,40 +63,50 @@ const darkTheme = createMuiTheme({
 });
 
 
-export default function CreateKey() {
+export default function CreateKey(props) {
     const [redirect, setRedirect] = useState(false)
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = React.useState(true);
     const [modalText, setModalText] = useState('');
     const [id, setID] = useState('')
     const [isIdUnique, setIsIdUnique] = useState(true)
     const [copy, setCopy] = useState(false)
-    const [keys, setKeys] = useState({
-        privkey: '',
-        pubkey: ''
-    })
-    const [ws,setWs] = useState('')
 
+    const [prvKey, setPrvKey] = useState('')
+    const [pubKey, setPubKey] = useState('')
+    const ws = useSelector((state) => state.wsGlobalStore);
+    const dispatch = useDispatch();
     useEffect(() => {
-        setKeys(generate_RSA_Keys('512'))
-        //webSocket
-        connect()
+        let genKeys = generate_RSA_Keys('512')
+        setPrvKey(genKeys.pubKey)
+        setPubKey(genKeys.prvKey)
+        if (ws.wsGlobal !== 0) {
+            console.log("wooooooooooooo")
 
+        }
     }, [])
-
-    const connect = () => {
-        var wsN = new WebSocket("wss://go-ie-99.herokuapp.com/websocket");
-
-        setWs(wsN)
-        // websocket onopen event listener
-        wsN.onopen = () => {
-            console.log("connected websocket main component");
-
-        };
-        wsN.onmessage=(res)=>{
-            console.log(res)
+    useEffect(() => {
+        if (ws.wsGlobal !== 0 && pubKey !== '') {
+            ws.wsGlobal.send(JSON.stringify({
+                "action": "insert",
+                "parameters": [
+                    {
+                        "key": "identifier",
+                        "value": {id}
+                    },
+                    {
+                        "key": "key",
+                        "value": {pubKey}
+                    }
+                ]
+            }))
+            ws.wsGlobal.onmessage = (res) => {
+                console.log(res)
+            }
         }
 
-    };
+        console.log(ws)
+
+    }, [id])
 
 
     const classes = useStyle()
@@ -173,7 +184,7 @@ export default function CreateKey() {
                         <Button
                             onClick={() => { //TODO  this onClick call an API and if that succeed we will close modal else we set isIdUnique to false
                                 setID(modalText);
-                                handleClose()
+
                             }}
                             color="primary"
                         >
@@ -191,12 +202,12 @@ export default function CreateKey() {
                             label={"private key"}
                             fullWidth={true}
                             multiline
-                            value={keys.privkey}
+                            value={prvKey}
                         />
                         <FileCopyOutlinedIcon
 
                             onClick={() => {
-                                navigator.clipboard.writeText(keys.privkey).then(() => setCopy(true))
+                                navigator.clipboard.writeText(prvKey).then(() => setCopy(true))
                             }}
                             style={{margin: 5, marginTop: 10, cursor: "pointer"}}
                         />
@@ -212,13 +223,13 @@ export default function CreateKey() {
                             fullWidth={true}
                             multiline
                             rowsMax={10}
-                            value={keys.pubkey}
+                            value={pubKey}
 
                         />
                         <FileCopyOutlinedIcon
 
                             onClick={() => {
-                                navigator.clipboard.writeText(keys.pubkey).then(() => setCopy(true))
+                                navigator.clipboard.writeText(pubKey).then(() => setCopy(true))
                             }}
                             style={{margin: 5, marginTop: 10, cursor: "pointer",}}
                         />
@@ -228,10 +239,10 @@ export default function CreateKey() {
 
                             onClick={() => {
                                 const zip = new JSZip
-                                zip.file("public_key.txt",keys.pubkey)
-                                zip.file("private_key.txt",keys.privkey)
-                                zip.generateAsync({type:"blob"}).then(function(content){
-                                    saveAs(content,"keys.zip")
+                                zip.file("public_key.txt", pubKey)
+                                zip.file("private_key.txt", prvKey)
+                                zip.generateAsync({type: "blob"}).then(function (content) {
+                                    saveAs(content, "keys.zip")
                                 })
 
                             }}
@@ -239,24 +250,12 @@ export default function CreateKey() {
                         download as text file
                     </Button>
 
-                    <div onClick={()=>{
-                      ws.send(  JSON.stringify({
-                          "action": "insert",
-                          "parameters": [
-                              {
-                                  "key": "identifier",
-                                  "value": "ombe3-test"
-                              },
-                              {
-                                  "key": "key",
-                                  "value": "pub_key_test"
-                              }
-                          ]
-                      }))
+                    <div onClick={() => {
 
+                        dispatch(testPlus())
 
                     }}>
-                        send
+                        {ws.testKeeper}
                     </div>
                     <Snackbar open={copy} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                         <Alert onClose={handleCloseSnackbar} severity="success">

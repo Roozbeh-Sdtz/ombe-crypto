@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grow from '@material-ui/core/Grow';
-import {Link, Switch} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {ThemeProvider} from "@material-ui/styles";
-import {AppBar, createMuiTheme, IconButton, Toolbar, Typography} from "@material-ui/core";
-import KeyboardBackspaceOutlinedIcon from "@material-ui/icons/KeyboardBackspaceOutlined";
+import {AppBar, createMuiTheme, Toolbar, Typography} from "@material-ui/core";
+
+
 
 const useStyles = makeStyles((theme) => ({
     root: {

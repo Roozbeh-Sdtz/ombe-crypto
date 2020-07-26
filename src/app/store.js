@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import wsSlice from './wsSlice';
 
 export default configureStore({
   reducer: {
-    counter: counterReducer,
+    wsGlobalStore: wsSlice,
   },
 });
