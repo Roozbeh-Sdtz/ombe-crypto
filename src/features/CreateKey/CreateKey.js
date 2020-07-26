@@ -27,6 +27,8 @@ import MuiAlert from "@material-ui/lab/Alert";
 import JSZip from "jszip";
 import {saveAs} from 'file-saver';
 
+
+
 const useStyle = makeStyles((theme) => ({
     root: {
         display: "flex",
@@ -71,10 +73,30 @@ export default function CreateKey() {
         privkey: '',
         pubkey: ''
     })
+    const [ws,setWs] = useState('')
 
     useEffect(() => {
         setKeys(generate_RSA_Keys('512'))
+        //webSocket
+        connect()
+
     }, [])
+
+    const connect = () => {
+        var wsN = new WebSocket("wss://go-ie-99.herokuapp.com/websocket");
+
+        setWs(wsN)
+        // websocket onopen event listener
+        wsN.onopen = () => {
+            console.log("connected websocket main component");
+
+        };
+        wsN.onmessage=(res)=>{
+            console.log(res)
+        }
+
+    };
+
 
     const classes = useStyle()
 
@@ -216,6 +238,26 @@ export default function CreateKey() {
                     >
                         download as text file
                     </Button>
+
+                    <div onClick={()=>{
+                      ws.send(  JSON.stringify({
+                          "action": "insert",
+                          "parameters": [
+                              {
+                                  "key": "identifier",
+                                  "value": "ombe3-test"
+                              },
+                              {
+                                  "key": "key",
+                                  "value": "pub_key_test"
+                              }
+                          ]
+                      }))
+
+
+                    }}>
+                        send
+                    </div>
                     <Snackbar open={copy} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                         <Alert onClose={handleCloseSnackbar} severity="success">
                             copied to clipboard!
