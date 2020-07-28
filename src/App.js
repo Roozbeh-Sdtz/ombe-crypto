@@ -8,7 +8,7 @@ import {
 import Encrypt from "./features/Encrypt/Encrypt";
 import Decrypt from "./features/Decrypt/Decrypt";
 import CreateKey from "./features/CreateKey/CreateKey";
-import {setWsGlobal, setWsGlobalAsync} from './app/wsSlice'
+import {setWsGlobalAsync} from './app/wsSlice'
 import {useDispatch} from "react-redux";
 
 function App() {

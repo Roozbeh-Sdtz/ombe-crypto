@@ -27,7 +27,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import JSZip from "jszip";
 import {saveAs} from 'file-saver';
 import {useDispatch, useSelector} from "react-redux";
-import {testPlus} from '../../app/wsSlice'
+import {setWsGlobalAsync, testPlus} from '../../app/wsSlice'
 
 
 const useStyle = makeStyles((theme) => ({
@@ -64,29 +64,35 @@ const darkTheme = createMuiTheme({
 
 
 export default function CreateKey(props) {
-    const [redirect, setRedirect] = useState(false)
+    const [redirect, setRedirect] = useState(false);
     const [open, setOpen] = React.useState(true);
     const [modalText, setModalText] = useState('');
-    const [id, setID] = useState('')
-    const [isIdUnique, setIsIdUnique] = useState(true)
-    const [copy, setCopy] = useState(false)
+    const [id, setID] = useState('');
+    const [isIdUnique, setIsIdUnique] = useState(true);
+    const [copy, setCopy] = useState(false);
 
-    const [prvKey, setPrvKey] = useState('')
-    const [pubKey, setPubKey] = useState('')
-    const ws = useSelector((state) => state.wsGlobalStore);
+    const [prvKey, setPrvKey] = useState('');
+    const [pubKey, setPubKey] = useState('');
+    const ws = useSelector((state) => state.wsGlobalStore.wsGlobal);
+    let thisWs = ws;
     const dispatch = useDispatch();
     useEffect(() => {
-        let genKeys = generate_RSA_Keys('512')
-        setPrvKey(genKeys.pubKey)
-        setPubKey(genKeys.prvKey)
-        if (ws.wsGlobal !== 0) {
-            console.log("wooooooooooooo")
+        let genKeys = generate_RSA_Keys('512');
+        setPrvKey(genKeys.pubKey);
+        setPubKey(genKeys.prvKey);
+    }, []);
 
-        }
-    }, [])
     useEffect(() => {
-        if (ws.wsGlobal !== 0 && pubKey !== '') {
-            ws.wsGlobal.send(JSON.stringify({
+        if (ws !== 0) {
+            thisWs.onmessage = (res) => {
+                console.log(res)
+            }
+        }
+    }, [ws])
+
+    useEffect(() => {
+        if (ws !== 0 && pubKey !== '') {
+            ws.send(JSON.stringify({
                 "action": "insert",
                 "parameters": [
                     {
@@ -99,12 +105,9 @@ export default function CreateKey(props) {
                     }
                 ]
             }))
-            ws.wsGlobal.onmessage = (res) => {
-                console.log(res)
-            }
+
         }
 
-        console.log(ws)
 
     }, [id])
 
