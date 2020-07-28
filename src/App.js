@@ -8,40 +8,50 @@ import {
 import Encrypt from "./features/Encrypt/Encrypt";
 import Decrypt from "./features/Decrypt/Decrypt";
 import CreateKey from "./features/CreateKey/CreateKey";
-import {setWsGlobalAsync} from './app/wsSlice'
-import {useDispatch} from "react-redux";
+import {setWsGlobalAsync, wsIsOpen} from './app/wsSlice'
+import {useDispatch, useSelector} from "react-redux";
+
 
 function App() {
 
     const dispatch = useDispatch();
 
+    const wsStore = useSelector((state) => state.wsGlobalStore);
     useEffect(() => {
         const ws = new WebSocket("wss://go-ie-99.herokuapp.com/websocket")
-        ws.onopen=()=>{
-            dispatch(setWsGlobalAsync(ws));
+        ws.onopen = () => {
+            dispatch(setWsGlobalAsync(ws))
+
             console.log("connection opened")
         }
 
     }, [])
-
-    return (
-        <Router>
-            <Switch>
-                <Route path={"/encrypt"}>
-                    <Encrypt/>
-                </Route>
-                <Route path={"/decrypt"}>
-                    <Decrypt/>
-                </Route>
-                <Route path={"/create-key"}>
-                    <CreateKey/>
-                </Route>
-                <Route path={"/"}>
-                    <SimpleGrow/>
-                </Route>
-            </Switch>
-        </Router>
-    )
+    if (wsStore.isWsOpen === false) {
+        return (
+            <div>
+                isLoading...
+            </div>
+        )
+    } else {
+        return (
+            <Router>
+                <Switch>
+                    <Route path={"/encrypt"}>
+                        <Encrypt/>
+                    </Route>
+                    <Route path={"/decrypt"}>
+                        <Decrypt/>
+                    </Route>
+                    <Route path={"/create-key"}>
+                        <CreateKey/>
+                    </Route>
+                    <Route path={"/"}>
+                        <SimpleGrow/>
+                    </Route>
+                </Switch>
+            </Router>
+        )
+    }
 }
 
 export default App

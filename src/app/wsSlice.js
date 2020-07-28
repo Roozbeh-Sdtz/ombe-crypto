@@ -4,18 +4,23 @@ export const wsSlice = createSlice({
     name: 'wsKeeper',
     initialState: {
         wsGlobal: 0,
-        testKeeper: 0
+        isWsOpen: false
     },
     reducers: {
         setWsGlobal: (state, action) => {
             state.wsGlobal = action.payload;
+            state.isWsOpen =true;
         },
-        testPlus:(state,action)=>{
-            state.testKeeper += 1;
-        }
+        wsIsOpen:(state,action)=>{
+            state.isWsOpen =true;
+        },
+        wsIsNotOpen:(state,action)=>{
+            state.isWsOpen =false;
+        },
+
     },
 });
-export const { setWsGlobal,testPlus } = wsSlice.actions;
+export const { setWsGlobal,wsIsNotOpen,wsIsOpen } = wsSlice.actions;
 
 export const setWsGlobalAsync = wsN => dispatch => {
     dispatch(setWsGlobal(wsN));

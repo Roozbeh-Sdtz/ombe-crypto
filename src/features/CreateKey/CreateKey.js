@@ -73,7 +73,7 @@ export default function CreateKey(props) {
 
     const [prvKey, setPrvKey] = useState('');
     const [pubKey, setPubKey] = useState('');
-    const ws = useSelector((state) => state.wsGlobalStore.wsGlobal);
+    const ws = useSelector((state) => state.wsGlobalStore);
     let thisWs = ws;
     const dispatch = useDispatch();
     useEffect(() => {
@@ -83,25 +83,49 @@ export default function CreateKey(props) {
     }, []);
 
     useEffect(() => {
-        if (ws !== 0) {
-            thisWs.onmessage = (res) => {
-                console.log(res)
+        if (ws.wsGlobal !== 0) {
+            thisWs.wsGlobal.onmessage = (res) => {
+                const {action, message} = JSON.parse(res.data)
+                switch (action) {
+                    case "is_identifier_exist":
+                        is_identifier_existHandler(message)
+                        break;
+                    case "insert":
+                        insertHandler(message)
+                        break;
+
+                }
+
             }
         }
     }, [ws])
 
     useEffect(() => {
-        if (ws !== 0 && pubKey !== '') {
-            ws.send(JSON.stringify({
+        if (modalText !== '') {
+            ws.wsGlobal.send(JSON.stringify({
+                "action": "is_identifier_exist",
+                "parameters": [
+                    {
+                        "key": "identifier",
+                        "value": modalText
+                    }
+                ]
+            }))
+        }
+    }, [modalText])
+
+    useEffect(() => {
+        if (ws.wsGlobal !== 0 && pubKey !== '') {
+            ws.wsGlobal.send(JSON.stringify({
                 "action": "insert",
                 "parameters": [
                     {
                         "key": "identifier",
-                        "value": {id}
+                        "value": id
                     },
                     {
                         "key": "key",
-                        "value": {pubKey}
+                        "value": pubKey
                     }
                 ]
             }))
@@ -118,7 +142,19 @@ export default function CreateKey(props) {
         return <Redirect push to="/"/>;
     }
 
-
+    const is_identifier_existHandler = (res) => {
+        console.log(res)
+        if(res==="no"){
+            setIsIdUnique(true)
+        }else if(res === "yes"){
+            setIsIdUnique(false)
+        }
+    }
+    const insertHandler = (res) => {
+        if(res === 'inserted'){
+            handleClose()
+        }
+    }
     const handleClickOpen = () => {
         setOpen(true);
         setModalText(id)
@@ -187,7 +223,6 @@ export default function CreateKey(props) {
                         <Button
                             onClick={() => { //TODO  this onClick call an API and if that succeed we will close modal else we set isIdUnique to false
                                 setID(modalText);
-
                             }}
                             color="primary"
                         >
@@ -237,7 +272,6 @@ export default function CreateKey(props) {
                             style={{margin: 5, marginTop: 10, cursor: "pointer",}}
                         />
                     </div>
-
                     <Button variant="outlined"
 
                             onClick={() => {
@@ -253,13 +287,6 @@ export default function CreateKey(props) {
                         download as text file
                     </Button>
 
-                    <div onClick={() => {
-
-                        dispatch(testPlus())
-
-                    }}>
-                        {ws.testKeeper}
-                    </div>
                     <Snackbar open={copy} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                         <Alert onClose={handleCloseSnackbar} severity="success">
                             copied to clipboard!

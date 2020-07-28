@@ -3,20 +3,16 @@ import DropZone from "../Utill/DropZone";
 import {makeStyles} from "@material-ui/core/styles";
 import MultilineTextField from "../Utill/MultilineTextField";
 import {AppBar, Button, createMuiTheme, IconButton, Toolbar, Typography} from "@material-ui/core";
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from '@material-ui/lab/Alert';
 import {ThemeProvider} from "@material-ui/styles";
 import KeyboardBackspaceOutlinedIcon from "@material-ui/icons/KeyboardBackspaceOutlined";
 import {Redirect} from "react-router-dom";
 
 import JSZip from "jszip";
-import { saveAs } from 'file-saver';
+import {saveAs} from 'file-saver';
 
 import {encrypt_RSA} from '../../crypto/RSA'
-import {pub} from '../../crypto/key'
-
 import {AES_encrypt} from '../../crypto/AES_code_decode'
+import {useSelector} from "react-redux";
 
 const useStyle = makeStyles((theme) => ({
     root: {
@@ -63,18 +59,46 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 
-
 export default function Encrypt() {
     const classes = useStyle()
-    const [keyState, setKeyState] = useState(1) //0:default state  1:have userName State  2:does'nt have username state   3:wrong key state  4:loading    5:Done
+    const [keyState, setKeyState] = useState(2) //0:default state  1:have userName State  2:does'nt have username state   3:wrong key state  4:loading    5:Done
     const [color, setColor] = useState('')
     const [text, setText] = useState('')
-    const [publicKey, setPublicKey] = useState();
+    const [publicKey, setPublicKey] = useState('');
     const [redirect, setRedirect] = useState(false)
     const [files, setFiles] = useState('')
     const [AES, setAES] = useState({})
     const [encrypted_AES_pass_with_RSA, setEncrypted_AES_pass_with_RSA] = useState('')
 
+    const ws = useSelector((state) => state.wsGlobalStore);
+    let thisWs = ws;
+
+    useEffect(() => {
+        if (ws.wsGlobal !== 0) {
+            thisWs.wsGlobal.onmessage = (res) => {
+                const {action, message} = JSON.parse(res.data)
+                if (action === "read_identifier") {
+                    readIdentifierHandler(message)
+                }
+            }
+        }
+    }, [ws])
+
+    useEffect(() => {
+        if (publicKey !== '' && ws.wsGlobal !== 0) {
+            ws.wsGlobal.send(JSON.stringify({
+                "action": "read_identifier",
+                "parameters": [
+                    {
+                        "key": "key",
+                        "value": publicKey
+                    }
+                ]
+            }))
+
+        }
+
+    }, [publicKey])
     useEffect(() => {
         if (Object.keys(AES).length !== 0) {
             const AES_key_string = AES.key.toString()
@@ -85,15 +109,24 @@ export default function Encrypt() {
     useEffect(() => {
         if (encrypted_AES_pass_with_RSA !== '') {
             const zip = new JSZip();
-            zip.file("data",AES.data)
-            zip.file("key",encrypted_AES_pass_with_RSA)
-            zip.generateAsync({type:"blob"}).then(function(content){
-                saveAs(content,"encrypted.zip")
+            zip.file("data", AES.data)
+            zip.file("key", encrypted_AES_pass_with_RSA)
+            zip.generateAsync({type: "blob"}).then(function (content) {
+                saveAs(content, "encrypted.zip")
             })
 
 
         }
     }, [encrypted_AES_pass_with_RSA])
+
+    const readIdentifierHandler = (res) => {
+        console.log(res)
+        // if(res==="no"){
+        //     setIsIdUnique(true)
+        // }else if(res === "yes"){
+        //     setIsIdUnique(false)
+        // }
+    }
 
     const handleChange = (event) => {
         // setKeyState(4)
@@ -103,10 +136,10 @@ export default function Encrypt() {
         //API call.then(handelState(result))
     };
     const handleState = (res) => {
-        if (1) {//have username ===> res.username !== ''
+        if (res !== '') {//have username
             setKeyState(1)
             setColor('#5fe329')
-            setText('Roozbeh')//res.username
+            setText(res)//res.username
         } else {
             setKeyState(2)
             setColor('#ffe600')
@@ -128,7 +161,7 @@ export default function Encrypt() {
         const fileReader = new FileReader()
         fileReader.readAsArrayBuffer(files[0])
         fileReader.onload = function () {
-            const u8= new Uint8Array(fileReader.result)
+            const u8 = new Uint8Array(fileReader.result)
             setAES(AES_encrypt(u8))
 
         }
