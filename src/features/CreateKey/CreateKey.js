@@ -226,7 +226,7 @@ export default function CreateKey(props) {
                     <DialogTitle id="form-dialog-title">ID</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            To set unique ID to this public key, please enter your unique ID here. or click SKIP
+                            To set a unique ID to this public key, please enter your unique ID here. or click SKIP
                         </DialogContentText>
                         <TextField
                             autoFocus

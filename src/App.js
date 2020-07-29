@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import SimpleGrow from "./features/homePage/GrowingCards";
 import {
     BrowserRouter as Router,
@@ -8,7 +8,7 @@ import {
 import Encrypt from "./features/Encrypt/Encrypt";
 import Decrypt from "./features/Decrypt/Decrypt";
 import CreateKey from "./features/CreateKey/CreateKey";
-import {setWsGlobalAsync, wsIsOpen} from './app/wsSlice'
+import {setWsGlobalAsync} from './app/wsSlice'
 import {useDispatch, useSelector} from "react-redux";
 
 
