@@ -77,9 +77,8 @@ export default function Encrypt() {
         if (ws.wsGlobal !== 0) {
             thisWs.wsGlobal.onmessage = (res) => {
                 const {action, message} = JSON.parse(res.data)
-                if (action === "read_identifier") {
-                    readIdentifierHandler(message)
-                }
+
+                    readIdentifierHandler(action,message)
             }
         }
     }, [ws])
@@ -119,13 +118,13 @@ export default function Encrypt() {
         }
     }, [encrypted_AES_pass_with_RSA])
 
-    const readIdentifierHandler = (res) => {
-        console.log(res)
-        // if(res==="no"){
-        //     setIsIdUnique(true)
-        // }else if(res === "yes"){
-        //     setIsIdUnique(false)
-        // }
+    const readIdentifierHandler = (action,message) => {
+        console.log(action)
+        if (action === "read_identifier") {
+            handleState(message)
+        }else{
+            handleState('')
+        }
     }
 
     const handleChange = (event) => {
@@ -189,7 +188,9 @@ export default function Encrypt() {
                         <div className={classes.backButton} style={{width: 30}}/>
                     </Toolbar>
                 </AppBar>
-
+                <text>
+                    * only .zip
+                </text>
                 <div
                     className={classes.dropZone}
                 >
@@ -222,7 +223,7 @@ export default function Encrypt() {
                 <div style={{display: loadingDisplay}}>
                     <img src={require('./103.gif')} style={{width: '50px', height: '50px'}}/>
                 </div>
-                <Button variant="outlined" style={{display: startDisplay}}
+                <Button variant="outlined" style={{display: startDisplay,margin:25}}
                         onClick={() => {
                             startAES()
                         }}

@@ -1,7 +1,6 @@
 import JSEncrypt from './bin/jsencrypt'
 
-export const generate_RSA_Keys = (sKey_size) => {
-    var keySize = parseInt(sKey_size);
+export const generate_RSA_Keys = () => {
     var crypt = new JSEncrypt();
     crypt.getKey();
     let keys = {}

@@ -1,7 +1,7 @@
 import React from 'react';
 import {
     withStyles,
-    makeStyles, createMuiTheme,
+    makeStyles,
 } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 

@@ -26,8 +26,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 
 import JSZip from "jszip";
 import {saveAs} from 'file-saver';
-import {useDispatch, useSelector} from "react-redux";
-import {setWsGlobalAsync, testPlus} from '../../app/wsSlice'
+import {useSelector} from "react-redux";
 
 
 const useStyle = makeStyles((theme) => ({
@@ -66,6 +65,7 @@ const darkTheme = createMuiTheme({
 export default function CreateKey(props) {
     const [redirect, setRedirect] = useState(false);
     const [open, setOpen] = React.useState(true);
+    const [showId, setShowId] = useState(false)
     const [modalText, setModalText] = useState('');
     const [id, setID] = useState('');
     const [isIdUnique, setIsIdUnique] = useState(true);
@@ -75,11 +75,10 @@ export default function CreateKey(props) {
     const [pubKey, setPubKey] = useState('');
     const ws = useSelector((state) => state.wsGlobalStore);
     let thisWs = ws;
-    const dispatch = useDispatch();
     useEffect(() => {
-        let genKeys = generate_RSA_Keys('512');
-        setPrvKey(genKeys.pubKey);
-        setPubKey(genKeys.prvKey);
+        let genKeys = generate_RSA_Keys();
+        setPrvKey(genKeys.prvKey);
+        setPubKey(genKeys.pubKey);
     }, []);
 
     useEffect(() => {
@@ -144,17 +143,26 @@ export default function CreateKey(props) {
 
     const is_identifier_existHandler = (res) => {
         console.log(res)
-        if(res==="no"){
+        if (res === "no") {
             setIsIdUnique(true)
-        }else if(res === "yes"){
+        } else if (res === "yes") {
             setIsIdUnique(false)
         }
     }
     const insertHandler = (res) => {
-        if(res === 'inserted'){
+        if (res === 'inserted') {
             handleClose()
         }
     }
+
+    const handleShowIdOpen = () => {
+        setShowId(true)
+    }
+
+    const handleShowIdClose = () => {
+        setShowId(false)
+    }
+
     const handleClickOpen = () => {
         setOpen(true);
         setModalText(id)
@@ -189,10 +197,31 @@ export default function CreateKey(props) {
                             create Key
                         </Typography>
 
-                        <FingerprintIcon className={classes.backButton} onClick={handleClickOpen}/>
+                        <FingerprintIcon className={classes.backButton} onClick={() => {
+                            if (id === '') {
+                                handleClickOpen()
+                            } else {
+                                handleShowIdOpen()
+                            }
+                        }}/>
                     </Toolbar>
                 </AppBar>
 
+                <Dialog open={showId} onClose={handleShowIdClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">ID</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            {id}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={()=>{
+                            handleShowIdClose()
+                        }}>
+                            close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                     <DialogTitle id="form-dialog-title">ID</DialogTitle>
                     <DialogContent>
@@ -222,7 +251,10 @@ export default function CreateKey(props) {
                         </Button>
                         <Button
                             onClick={() => { //TODO  this onClick call an API and if that succeed we will close modal else we set isIdUnique to false
-                                setID(modalText);
+                                if (isIdUnique === true) {
+                                    setID(modalText);
+                                }
+
                             }}
                             color="primary"
                         >

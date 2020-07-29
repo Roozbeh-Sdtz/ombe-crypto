@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {DropzoneArea} from 'material-ui-dropzone'
-import {AES_encrypt} from "../../crypto/AES_code_decode";
 
 class DropZone extends Component {
     constructor(props) {
@@ -21,6 +20,7 @@ class DropZone extends Component {
                 onChange={this.handleChange.bind(this)}
                 filesLimit={1}
                 maxFileSize={100000000}
+                acceptedFiles={['.zip']}
             />
         )
     }
