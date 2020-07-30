@@ -122,7 +122,7 @@ export default function Encrypt() {
 
         if (action === "read_identifier") {
             handleState(message)
-        }else{
+        }else if(action === "read_identifier_not_exist"){
             handleState('')
         }
     }
@@ -222,9 +222,6 @@ export default function Encrypt() {
                     >
                         {text}
                     </div>
-                </div>
-                <div style={{display: loadingDisplay}}>
-                    <img src={require('./103.gif')} style={{width: '50px', height: '50px'}}/>
                 </div>
                 <Button variant="outlined" style={{display: startDisplay,margin:25}}
                         onClick={() => {
