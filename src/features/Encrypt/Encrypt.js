@@ -157,6 +157,9 @@ export default function Encrypt() {
     }
 
     const startAES = () => {
+        if (publicKey == '') {
+            return
+        }
         const fileReader = new FileReader()
         fileReader.readAsArrayBuffer(files[0])
         fileReader.onload = function () {
