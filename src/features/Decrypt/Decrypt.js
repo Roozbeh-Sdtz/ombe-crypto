@@ -12,11 +12,10 @@ import {
 } from "@material-ui/core";
 import KeyboardBackspaceOutlinedIcon from '@material-ui/icons/KeyboardBackspaceOutlined';
 import {ThemeProvider} from "@material-ui/styles";
-import {Link, Redirect} from "react-router-dom";
+import {Redirect} from "react-router-dom";
 
 import {AES_decrypt} from '../../crypto/AES_code_decode'
 import {decrypt_RSA} from '../../crypto/RSA'
-import {pri} from '../../crypto/key'
 
 import JSZip from "jszip";
 import { saveAs } from 'file-saver';

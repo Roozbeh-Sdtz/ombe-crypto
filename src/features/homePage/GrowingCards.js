@@ -4,9 +4,19 @@ import Paper from '@material-ui/core/Paper';
 import Grow from '@material-ui/core/Grow';
 import {Link} from 'react-router-dom'
 import {ThemeProvider} from "@material-ui/styles";
-import {AppBar, createMuiTheme, Toolbar, Typography} from "@material-ui/core";
+import {
+    AppBar, Button,
+    createMuiTheme, Dialog, DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Toolbar,
+    Typography
+} from "@material-ui/core";
 
+import InfoIcon from '@material-ui/icons/Info';
 
+import VerticalLinearStepper from '../Utill/Stepper'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,26 +46,72 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+
 export default function SimpleGrow() {
     const classes = useStyles();
     const [checked, setChecked] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
 
     const darkTheme = createMuiTheme({
         palette: {
             type: 'dark',
         },
     });
+    const handleShow = () => {
+        setOpen(true)
+    }
 
+    const handleClose = () => {
+        setOpen(false)
+    }
     return (
         <div className={classes.root}>
             <ThemeProvider theme={darkTheme}>
                 <AppBar color={"#424242"}>
-                    <Toolbar style={{display: 'flex', justifyContent: "center"}}>
+
+                    <Toolbar style={{display: 'flex', justifyContent: "space-between"}}>
+                        <div/>
                         <Typography variant="h6" className={classes.title}>
                             OMBE-cryptography
                         </Typography>
+                        <InfoIcon style={{cursor: 'pointer'}}
+                                  onClick={handleShow}
+                        />
                     </Toolbar>
+
                 </AppBar>
+
+                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle id="form-dialog-title">info</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText> This is an open source cryptography application based on AES and RSA for all kinds of
+                            file encryption and decryption right on your browser with straightforward steps.
+                        </DialogContentText>
+                        <VerticalLinearStepper/>
+
+                        <div style={{display: "flex", flexDirection: "column"}}>
+                            <a href={"https://github.com/guftall/go-ie-99"} target="_blank" style={{
+                                textDecoration: "none",
+                                color: "#fff",
+                                margin: 10
+                            }}>https://github.com/guftall/go-ie-99</a>
+                            <a href={"https://github.com/Roozbeh2429/ombe-crypto"} target="_blank" style={{
+                                textDecoration: "none",
+                                color: "#fff",
+                                margin: 10
+                            }}>https://github.com/Roozbeh2429/ombe-crypto</a>
+                        </div>
+
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={() => {
+                            handleClose()
+                        }}>
+                            close
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
                 <div className={classes.container}>
                     <Grow in={true}
                           style={{transformOrigin: '0 0 0'}}
