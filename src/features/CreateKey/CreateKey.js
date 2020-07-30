@@ -208,7 +208,7 @@ export default function CreateKey(props) {
                 </AppBar>
 
                 <Dialog open={showId} onClose={handleShowIdClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">ID</DialogTitle>
+                    <DialogTitle id="form-dialog-title">ID(optional)</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             {id}

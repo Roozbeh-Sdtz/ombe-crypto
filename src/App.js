@@ -18,11 +18,15 @@ function App() {
 
     const wsStore = useSelector((state) => state.wsGlobalStore);
     useEffect(() => {
-        const ws = new WebSocket("wss://go-ie-99.herokuapp.com/websocket")
+        let ws = new WebSocket("wss://go-ie-99.herokuapp.com/websocket")
         ws.onopen = () => {
             dispatch(setWsGlobalAsync(ws))
 
             console.log("connection opened")
+        }
+
+        ws.onclose = ()=>{
+            ws = new WebSocket("wss://go-ie-99.herokuapp.com/websocket")
         }
 
     }, [])
