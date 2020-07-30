@@ -119,7 +119,7 @@ export default function Encrypt() {
     }, [encrypted_AES_pass_with_RSA])
 
     const readIdentifierHandler = (action,message) => {
-        console.log(action)
+
         if (action === "read_identifier") {
             handleState(message)
         }else{

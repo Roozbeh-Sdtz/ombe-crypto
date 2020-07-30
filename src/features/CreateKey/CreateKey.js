@@ -142,7 +142,7 @@ export default function CreateKey(props) {
     }
 
     const is_identifier_existHandler = (res) => {
-        console.log(res)
+
         if (res === "no") {
             setIsIdUnique(true)
         } else if (res === "yes") {

@@ -23,11 +23,18 @@ function App() {
             dispatch(setWsGlobalAsync(ws))
 
             console.log("connection opened")
+
+            setInterval(() => { //for keeping ws alive
+
+                ws.send(JSON.stringify({
+                        "action": "echo",
+                        "parameters": []
+                    })
+                )
+                console.log("is alive")
+            }, 15000)
         }
 
-        ws.onclose = ()=>{
-            ws = new WebSocket("wss://go-ie-99.herokuapp.com/websocket")
-        }
 
     }, [])
     if (wsStore.isWsOpen === false) {

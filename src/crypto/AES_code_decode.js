@@ -6,7 +6,6 @@ export const AES_encrypt = (inputStringData) => {
         const k = Math.floor(Math.random() * 256)
         key.push(k)
     }
-    console.log(key)
     const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
     return {
         data: aesCtr.encrypt(inputStringData),
