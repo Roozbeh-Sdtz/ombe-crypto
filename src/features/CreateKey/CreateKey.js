@@ -208,7 +208,7 @@ export default function CreateKey(props) {
                 </AppBar>
 
                 <Dialog open={showId} onClose={handleShowIdClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">ID(optional)</DialogTitle>
+                    <DialogTitle id="form-dialog-title">ID</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             {id}
@@ -223,7 +223,7 @@ export default function CreateKey(props) {
                     </DialogActions>
                 </Dialog>
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle id="form-dialog-title">ID</DialogTitle>
+                    <DialogTitle id="form-dialog-title">ID(optional)</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             To set a unique ID to this public key, please enter your unique ID here. or click SKIP
